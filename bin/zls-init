@@ -1,0 +1,163 @@
+#!/usr/bin/env node
+const fs = require('fs')
+const path = require('path')
+const chalk = require('chalk')
+const meow = require('meow')
+const kopy = require('kopy')
+const $ = require('shelljs')
+const tildify = require('tildify')
+const install = require('yarn-install')
+const _ = require('../lib/utils')
+
+const cli = meow(`
+  ${chalk.bold('Options:')}
+    ${chalk.yellow('--force, -f')}            ${chalk.dim('Override existing folder')}
+    ${chalk.yellow('--electron, -e')}         ${chalk.dim('Generated Electron app')}
+    ${chalk.yellow('--help, -h')}             ${chalk.dim('Output help (You are here!)')}
+    ${chalk.yellow('--no-prompts, -n')}       ${chalk.dim('Skip prompts and use default value with CLI options')}
+    ${chalk.yellow('--version, -v')}          ${chalk.dim('Output version')}
+    ${chalk.yellow('--h5')}                   ${chalk.dim('Generated HTML5')}
+\t`, {
+  alias: {
+    h: 'help',
+    v: 'version',
+    e: 'electron',
+    f: 'force',
+    n: 'no-prompts',
+  }
+})
+
+const name = cli.input[0]
+
+if (!name) {
+  console.error(chalk.red('> A folder name is required to perform this action!'))
+  process.exit(1)
+}
+
+const dest = _.cwd(name)
+if (!cli.flags.force && fs.existsSync(dest)) {
+  console.error(chalk.red(`${chalk.yellow(tildify(dest))} already exists, you can use \`--force\` option to override it`))
+  process.exit(1)
+}
+
+
+const defaults = Object.assign({
+  name,
+  electron: false,
+  vuex:true,
+  router:true,
+  moduleName:'',
+  h5: false,
+  axios:true
+}, cli.flags)
+
+
+const prompts = [
+  {
+    name: 'name',
+    default: defaults.name,
+    message: 'Choose a name for your new project:'
+  },{
+    name: 'electron',
+    default: defaults.electron,
+    message: 'Is it an Electron app?',
+    type: 'confirm'
+  },{
+    name: 'vuex',
+    default: defaults.vuex,
+    message: 'Whether to use vuex?',
+    type: 'confirm'
+  },{
+    name: 'router',
+    default: defaults.router,
+    message: 'Whether to use router?',
+    type: 'confirm'
+  },{
+    name: 'axios',
+    default: defaults.axios,
+    message: 'Whether to use axios?',
+    type: 'confirm'
+  },
+  // {
+  //   name: 'component',
+  //   default: defaults.component,
+  //   message: 'Whether to use component?',
+  //   type: 'confirm',
+  //   when: answers => !answers.electron,
+  // },
+  // {
+  //   name: 'moduleName',
+  //   message: `What's the exported module name of the component? (in umd format)`,
+  //   when: answers => answers.component,
+  //   default(answers) {
+  //     return answers.name.replace(/[-_.]([\w])/, (_, p1) => p1.toUpperCase())
+  //   }
+  // }
+]
+
+const options = {
+  //忽略文件
+  filters: {
+    'app/**': 'electron',
+    'zls.packager.js': 'electron',
+    'tools/**': 'electron',
+    'h5/**':'h5',
+    'static/**':'!electron',
+    'src/stores/**': 'vuex',
+    'src/utils/axios.js': 'axios',
+    'src/{pages/**,router/**}': 'router',
+  }
+}
+if (cli.flags.noPrompts === true) {
+  console.log('> Skipping prompts (using default value)')
+  options.data = defaults
+} else {
+  options.prompts = prompts
+  options.data = defaults
+}
+
+kopy(_.ownDir('template'), dest,options).then(({files, merged}) => {
+  console.log()
+  // console.log(options)
+  console.log('================================')
+  // return false
+  for (const file of files) {
+    console.log(`${chalk.green('Generating')} · ${file}`)
+  }
+  for (const file of ['gitignore', 'editorconfig']) {
+    console.log(`${chalk.magenta('Moving    ')} · ${file} -> .${file}`)
+    $.mv(path.join(dest, file), path.join(dest, `.${file}`))
+  }
+  // if (merged.router) {
+  //   move(dest, 'src/router', 'src/pages')
+  // }
+  console.log('\n> Installing zls in project:\n')
+  if (!merged.electron) {
+    install ({cwd: dest})
+  }
+  console.log(`\n${chalk.bgGreen.black(' DONE ')} Successfully generated into ${chalk.yellow(tildify(dest))}!\n`)
+
+  console.log(chalk.bold('To get started:'))
+ 
+  if (merged.electron) {
+    console.log(`\n  cd ${name} && set ELECTRON_MIRROR=http://npm.taobao.org/mirrors/electron/&&npm install \n`)
+    console.log('  npm run dev\n')
+    console.log(chalk.bold('In another tab:\n'))
+    console.log('  npm run app\n')
+  }else{
+    console.log(`\n  cd ${name}\n`)
+    console.log('  npm run dev\n')
+  }
+  
+  console.log(chalk.bold('To build for production:'))
+  console.log('\n  npm run build\n')
+
+  console.log(chalk.dim('For more usage, please view README.md\n'))
+}).catch(console.error)
+
+function move(dir, from, to) {
+  console.log(`${chalk.magenta('Moving    ')} · ${from} -> ${to}`)
+  const dest = path.join(dir, to)
+  $.rm('-rf', dest)
+  $.mv(path.join(dir, from), dest)
+}

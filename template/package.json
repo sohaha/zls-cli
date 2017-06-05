@@ -1,0 +1,46 @@
+{
+  "private": true,
+  "name": "<%= name %>",
+  "version": "0.0.0",
+  "repository": {},
+  "scripts": {
+    "test": "echo lol",
+    "lint": "zls -c --eslint",
+    <%_ if (electron) { -%>
+    "app": "set NODE_ENV=development && electron app/index.js",
+    "dist": "npm run dist:mac && npm run dist:win && npm run dist:linux",
+    "dist:mac": "build --mac",
+    "dist:win": "build --win --ia32",
+    "dist:linux": "build --linux deb tar.xz", 
+    "postinstall": "install-app-deps",
+    "win": "zls -c && electron-packager app my-app win x64 --out=./dist/ --overwrite --icon=./app/dest/favicon.ico",
+    "win32": "set NODE_ENV=production&&set PLATFORM_TARGET=win32&&set VERSION=0.0.1&&zls -c&&node zls.packager.js",
+    "win322": "zls -c && electron-packager app my-app --out=./dist --platform=win32 --arch=x64 --version=1.0.0 --icon=./icon/icon --asar=false --overwrite --download.mirror=https://npm.taobao.org/mirrors/electron/  --win32metadata.FileDescription=desktop-app --win32metadata.ProductName=zls --win32metadata.CompanyName=seekwe --win32metadata.OriginalFilename=73zls.exe --production",
+    <%_ } -%>
+    "dev": "zls -dc",
+    "build": "zls -c"
+  },
+  <%_ if (electron) { -%>
+  "build": {
+    "appId": "com.zls.devdocs-app",
+    "category": "public.app-category.developer-tools",
+    "asar": true,
+    "win": {
+      "target": [
+        "squirrel"
+      ]
+    }
+  },
+  <%_ } -%>
+  "devDependencies": {
+    <%_ if (electron) { -%>
+    "shelljs": "^0.7.7",
+    "electron": "^1.4.15",
+    "electron-devtools-installer": "^2.1.0",
+    "electron-builder-squirrel-windows": "^13.10.1",
+    "electron-packager": "^8.5.2",
+    "vue-electron": "^1.0.6"
+    <%_ } -%>
+  },
+  "license": "Apache License"
+}
