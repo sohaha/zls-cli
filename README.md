@@ -16,10 +16,9 @@ cd app
 npm run dev
 ```
 
-## Author
+## Strange
 
-**zls.init** © seekwe, Released under the [Apache License](http://www.apache.org/licenses/LICENSE-2.0) License.
-
+Do not ask me why join node_modules in version control, because i'm lazy ...
 
 ## Credits
 
@@ -35,6 +34,6 @@ npm run dev
 
 [electron](https://github.com/electron/electron)
 
-## doubt
+## Author
 
-别问我为什么连node_modules也放到git里,因为懒....
+**zls.init** © seekwe, Released under the [Apache License](http://www.apache.org/licenses/LICENSE-2.0) License.
