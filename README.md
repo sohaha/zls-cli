@@ -1,10 +1,10 @@
 ## DOCS
 
-[中文文档](https://zlsinit.doc.73zls.com)
+[中文文档](https://docs.73zls.com/zls-cli/#)
 
 ## Install
 
-`npm install -g zls.init`
+`npm install -g zls-cli`
 
 ## Use
 
