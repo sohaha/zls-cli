@@ -1,6 +1,6 @@
 ## DOCS
 
-[中文文档](https://docs.73zls.com/zls-cli/#)
+[中文文档](https://docs.73zls.com/zls-cli/#/)
 
 ## Install
 
@@ -15,10 +15,6 @@ cd app
 
 npm run dev
 ```
-
-## Strange
-
-Do not ask me why join node_modules in version control, because i'm lazy ...
 
 ## Credits
 
@@ -36,4 +32,4 @@ Do not ask me why join node_modules in version control, because i'm lazy ...
 
 ## Author
 
-**zls.init** © seekwe, Released under the [Apache License](http://www.apache.org/licenses/LICENSE-2.0) License.
+**zls-cli** © seekwe, Released under the [Apache License](http://www.apache.org/licenses/LICENSE-2.0) License.

@@ -32,7 +32,7 @@ plugin.install = function (Vue) {
         if (before === null) {
           before = axios.interceptors.request.use(config => {
             if (config.method === 'post') {
-              config.data = qs.stringify(config.data)
+              config.data = qs.stringify(config.data) || config.data
             }
             return config
           }, error => {

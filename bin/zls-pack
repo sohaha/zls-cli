@@ -1,13 +1,13 @@
 #!/usr/bin/env node
+
 const chalk = require('chalk')
 const meow = require('meow')
 const chokidar = require('chokidar')
 const AppError = require('../lib/app-error')
-const {getConfigFile} = require('../lib/utils')
+const { getConfigFile } = require('../lib/utils')
 
 const cli = meow(`
   ${chalk.bold('Options:')}
-
     ${chalk.yellow('--dev, -d')}        ${chalk.dim('Pack in development mode')}
     ${chalk.yellow('--watch, -w')}      ${chalk.dim('Pack in watch mode')}
     ${chalk.yellow('--config, -c')}     ${chalk.dim('Load config file')}
@@ -20,24 +20,41 @@ const cli = meow(`
     ${chalk.yellow('--version, -v')}    ${chalk.dim('Output version')}
 
   ${chalk.bold('Commands:')}
-
     ${chalk.yellow('pack')}        ${chalk.dim('Pack your Vue app (default command)')}
     ${chalk.yellow('init')}        ${chalk.dim('Initialize an empty project')}
 
   ${chalk.bold('To see the help for specific command, you can run:')}
-
     ${chalk.yellow('zls [command] --help')}
 \t`, {
-  alias: {
-    h: 'help',
-    v: 'version',
-    d: 'dev',
-    c: 'config',
-    o: 'open',
-    p: 'port',
-    w: 'watch',
-    e: 'eslint',
-    a: 'analyzer'
+  booleanDefault: undefined,
+  flags: {
+    help: {
+      alias: 'h'
+    },
+    dev: {
+      alias: 'd'
+    },
+    config: {
+      alias: 'c'
+    },
+    open: {
+      alias: 'o'
+    },
+    port: {
+      alias: 'p'
+    },
+    version: {
+      alias: 'v'
+    },
+    watch: {
+      alias: 'w'
+    },
+    eslint: {
+      alias: 'e'
+    },
+    analyzer: {
+      alias: 'a'
+    }
   }
 })
 
@@ -52,10 +69,11 @@ if (cli.input[0]) {
 const main = require('../lib')
 
 const start = () => {
+
   const result = main(options)
 
-  const {host, port, open} = result.options
-  const {server, devMiddleWare} = result
+  const { host, port, open } = result.options
+  const { server, devMiddleWare } = result
 
   if (server) {
     server.listen(port, host, () => {
@@ -63,14 +81,13 @@ const start = () => {
         require('opn')(`http://${host}:${port}`)
       }
     })
-    .on('error', err => {
-      if (err.code === 'EADDRINUSE') {
-        return handleError(new AppError(`Port ${port} is already in use.\n\nYou can use another one by adding \`--port <port>\` or set it in config file.`))
-      }
-      handleError(err)
-    })
+          .on('error', err => {
+            if (err.code === 'EADDRINUSE') {
+              return handleError(new AppError(`Port ${port} is already in use.\n\nYou can use another one by adding \`--port <port>\` or set it in config file.`))
+            }
+            handleError(err)
+          })
   }
-
 
   // watch config file
   if (options.dev || options.watch) {
@@ -109,7 +126,8 @@ const start = () => {
 
 try {
   start()
-} catch (err) {
+}
+catch ( err ) {
   handleError(err)
 }
 

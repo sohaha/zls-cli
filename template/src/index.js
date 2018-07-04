@@ -14,10 +14,10 @@ import axios from './utils/axios'
 Vue.use (axios)
 <%_ } -%>
 <%_ if (router) { -%>
-import App from './pages/App'
+import App from './pages/app'
 import router from './router'
 <%_ } else { -%>
-import App from './components/App'
+import App from './components/app'
 <%_ } -%>
 new Vue({
   el: '#app',

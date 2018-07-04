@@ -1,14 +1,16 @@
 #!/usr/bin/env node
+
 const path = require('path')
 const spawn = require('cross-spawn')
 const update = require('update-notifier')
 const pkg = require('../package.json')
 
-update({pkg}).notify()
+update({ pkg })
+.notify()
 
 const defaultCommand = 'pack'
 let cmd = process.argv[2]
-const commands = new Set([defaultCommand, 'init'])
+const commands = new Set([defaultCommand, 'init', 'make', 'new'])
 let args
 
 if (commands.has(cmd)) {
@@ -17,11 +19,12 @@ if (commands.has(cmd)) {
   cmd = defaultCommand
   args = process.argv.slice(2)
 }
-
+if (cmd === 'new') cmd = 'make'
 const bin = path.join(__dirname, 'zls-' + cmd)
 
 const startProcess = () => {
   const proc = spawn(bin, args, { stdio: 'inherit', customFds: [0, 1, 2] })
+
   proc.on('close', (code, signal) => {
     if (code !== null) {
       process.exit(code)
@@ -39,6 +42,7 @@ const startProcess = () => {
     console.error(err)
     process.exit(1)
   })
+
   return proc
 }
 

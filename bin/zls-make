@@ -1,0 +1,166 @@
+#!/usr/bin/env node
+
+const fs = require('fs')
+const path = require('path')
+const chalk = require('chalk')
+const meow = require('meow')
+const home = require('user-home')
+const kopy = require('../lib/copy')
+const $ = require('shelljs')
+const _ = require('../lib/utils')
+const download = require('download-git-repo')
+const downloadFile = require('download')
+const tildify = require('tildify')
+const install = require('yarn-install')
+
+const cli = meow(`
+  ${chalk.bold('Options:')}
+    ${chalk.yellow('--help, -h')}             ${chalk.dim('Output help (You are here!)')}
+    ${chalk.yellow('--version, -v')}          ${chalk.dim('Output version')}
+    ${chalk.yellow('--template, -t')}         ${chalk.dim('Template name')}
+    ${chalk.yellow('--name, -n')}             ${chalk.dim('Project name')}
+    ${chalk.yellow('--from, -f')}             ${chalk.dim('From Repo (default github)')}
+\t`, {
+  booleanDefault: undefined,
+  flags: {
+    help: {
+      alias: 'h'
+    },
+    name: {
+      alias: 'n'
+    },
+    from: {
+      alias: 'f'
+    },
+    template: {
+      alias: 't'
+    },
+    version: {
+      alias: 'v'
+    }
+  }
+})
+
+const name = cli.flags.name || './' //cli.input[0] ||
+
+// if (!name) {
+//     console.error(chalk.red('> A folder name is required to perform this action!'))
+//     process.exit(1)
+// }
+
+const isPhp = cli.input[0] === 'php'
+let template = cli.flags.template || isPhp ? cli.input[1] || 'basis' : cli.input[0] || 'seekwe/template-vue'
+
+let templateDir = '/template'
+let templateTmp = path.join(home, '.zls-templates')
+if (!fs.existsSync(templateTmp)) {
+  fs.mkdirSync(templateTmp)
+}
+templateTmp = path.join(templateTmp, template.replace(/\//g, '-'))
+
+let dest = _.cwd(name)
+let output = cli.input[2]
+if (isPhp) {
+  if (cli.input[1]) {
+    templateTmp += '.zip'
+
+    let defaultFiles = templateTmp.indexOf('zlsphp-packages') >= 0 ? 'application/packages' : ''
+    dest = dest + '/' + (output || defaultFiles)
+  } else {
+    console.error(chalk.red(`unknown zlsphp template, Example command: zls make php zlsphp. `))
+    process.exit(1)
+  }
+} else {
+  if (template.indexOf('/') < 0) {
+    template = 'sohaha/' + template
+    // console.error(chalk.red(`template ${chalk.yellow(template)} not found. `))
+    // process.exit(1)
+  }
+  if (!!cli.input[1]) dest = dest + '/' + cli.input[1]
+}
+
+if (name !== './' && !cli.flags.force && fs.existsSync(dest)) {
+  console.error(chalk.red(`${chalk.yellow(tildify(dest))} already exists. `))
+  process.exit(1)
+}
+
+if (cli.flags.from === 'local') {
+  if (fs.existsSync(template)) {
+    copy(template + templateDir, dest)
+  } else {
+    console.error(chalk.red(`Local template ${chalk.yellow(template)} not found. `))
+  }
+} else {
+  let fn = !isPhp ? () => {
+    copy(templateTmp + templateDir, dest)
+  } : () => {
+    let unzip = require('unzip')
+    let extract = unzip.Extract({ path: dest })
+    extract.on('error', function (err) {
+      fs.unlinkSync(templateTmp)
+      console.error(chalk.red(err))
+    })
+    extract.on('finish', function () {
+
+      console.log(`\n${chalk.bgGreen.black(' DONE ')} Successfully generated into ${chalk.yellow(tildify(dest))}!\n`)
+
+    })
+    fs.createReadStream(templateTmp)
+      .pipe(extract)
+  }
+  downloadAndGenerate(template, fn, isPhp)
+}
+
+function downloadAndGenerate(template, fn, isPhp = false) {
+  console.log('\n> Installing...\n')
+  let templateTmpExists = fs.existsSync(templateTmp)
+  let newTemplateTmp = false
+  if (templateTmpExists) {
+    let stat = fs.statSync(templateTmp)
+    if (((+new Date()) - (+stat.mtime)) >= 3600) {
+      newTemplateTmp = true
+    }
+  }
+
+  if (newTemplateTmp) {
+    fn()
+  } else {
+    if (!isPhp) {
+      download(template, templateTmp, { clone: false }, function (err) {
+        if (err) {
+          console.error(chalk.red(`Failed to download repo ${chalk.yellow(template)} : ${err.message.trim()} `))
+          process.exit(1)
+        }
+        console.log(`\n> Download ${name} ok !`)
+        fn()
+      })
+    } else {
+      let url = 'https://zlsphp.73zls.com/index.php/ZlsPHP/'
+      downloadFile(url + template + '.aspx')
+      .then(e => {
+        fs.writeFileSync(templateTmp, e)
+        fn()
+      })
+      .catch(e => {
+        console.error(chalk.red(e))
+      })
+    }
+  }
+
+}
+
+function copy(template) {
+  let options = kopy.getConfig(template, 'zls.js')
+  //options.templateOptions.delimiter = '$'
+  if (options) {
+    //options.prompts.name.default
+  } else {
+    options = {}
+  }
+  kopy.init(template, dest, options, chalk, () => {
+    console.log('\n> Install node_modules...\n')
+    install({ cwd: dest })
+  }, (e) => {
+    console.error(chalk.red(`${e}`))
+  })
+}

@@ -4,8 +4,8 @@
   </div>
 </template>
 
-<script type="text/javascript">
-  import app from '../components/App.vue'
+<script>
+  import app from '../components/app.vue'
   export default {
     data() {
       return {}

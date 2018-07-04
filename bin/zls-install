@@ -1,0 +1,27 @@
+#!/usr/bin/env node
+
+const install = require('yarn-install')
+const { cwd, ownDir, fsExistsSync, getPublicPath } = require('../lib/utils')
+
+const start = () => {
+  let o = {
+    cwd: ownDir('global_node_modules')
+    // showCommand:true,
+  }
+  var pkg = require(cwd() + '/package.json')
+
+  var dependencies = pkg.dependencies
+  let depe = []
+  for (let k in dependencies) {
+    depe.push(k + '@' + dependencies[k])
+  }
+  //console.log(depe)
+  install(depe, o)
+
+}
+try {
+  start()
+}
+catch ( err ) {
+  console.log(err)
+}
