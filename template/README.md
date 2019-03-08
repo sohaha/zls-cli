@@ -38,3 +38,7 @@
 
 
 ---
+
+## zls-cli Docs
+
+zls.confing.js configuration, see the documentation for more configuration [zls-cli Docs](https://docs.73zls.com/zls-cli/)

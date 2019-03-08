@@ -1,12 +1,12 @@
-const packager = require('electron-packager')
-const path = require('path')
-const $ = require('shelljs')
-const fs = require("fs");
+const packager = require('electron-packager');
+const path = require('path');
+const $ = require('shelljs');
+const fs = require('fs');
 
 // "win32": "zls -c && electron-packager app my-app --out=./dist --platform=win32 --arch=x64 --version=1.0.0 --icon=./icon/icon --asar=false --overwrite --download.mirror=https://npm.taobao.org/mirrors/electron/  --win32metadata.FileDescription=desktop-app --win32metadata.ProductName=zls --win32metadata.CompanyName=seekwe --win32metadata.OriginalFilename=73zls.exe --production",
-let appPath = path.join(__dirname, 'app')
-let buildPath = path.join(__dirname, 'build')
-let toolsPath = path.join(__dirname, 'tools')
+let appPath = path.join(__dirname, 'app');
+let buildPath = path.join(__dirname, 'build');
+let toolsPath = path.join(__dirname, 'tools');
 let options = {
   name: 'zls',
   asar: false,
@@ -21,8 +21,8 @@ let options = {
   },
   platform: process.env.PLATFORM_TARGET || 'all',
   appVersion: process.env.VERSION || '1.0.0',
-  arch: process.env.ARCH || 'x64',
-}
+  arch: process.env.ARCH || 'x64'
+};
 
 // $.cp(path.join(__dirname, 'z.js'), path.join(dir, 'dd'))
 
@@ -52,33 +52,33 @@ let options = {
 //   });
 // }
 
-function cpFile (filesPath, buildPath) {
-  
+function cpFile(filesPath, buildPath) {
+
   fs.readdir(filesPath, function (err, files) {
     if (err) {
       console.log(err);
       return;
     }
     files.forEach(function (filename) {
-      if ('dist' != filename.trim()) {
-        $.cp('-Rf', path.join(filesPath, filename), path.join(buildPath, filename))
+      if ('dist' !== filename.trim()) {
+        $.cp('-Rf', path.join(filesPath, filename), path.join(buildPath, filename));
       }
     });
-  })
-  
+  });
+
 }
 
-packager(options, function done_callback (err, appPaths) {
+packager(options, function done_callback(err, appPaths) {
   if (!err) {
     appPaths.forEach(function (filesPath) {
       // let outpath = filesPath + '/resources/app'
       // $.mkdir(outpath)
       // cpFile(appPath, outpath)
-      let outpath = filesPath + '/resources/tools'
-      $.mkdir(outpath)
-      cpFile(toolsPath, outpath)
+      let outpath = filesPath + '/resources/tools';
+      $.mkdir(outpath);
+      cpFile(toolsPath, outpath);
     });
   } else {
-    console.error(err)
+    console.error(err);
   }
-})
+});

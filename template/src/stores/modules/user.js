@@ -7,4 +7,4 @@ export default {
     'username': '影浅',
     'author': 'seekwe@gmail.com'
   }
-}
+};

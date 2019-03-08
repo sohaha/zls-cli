@@ -1,7 +1,7 @@
-{
+﻿{
   "name": "zls-cli",
   "description": "快速上手的webpack构建工具",
-  "version": "0.6.0",
+  "version": "0.4.24",
   "bin": {
     "zls": "bin/zls",
     "zls-cli": "bin/zls",
@@ -67,9 +67,9 @@
     "serve-handler": "^5.0.8",
     "shelljs": "^0.8.2",
     "tildify": "^1.2.0",
-    "uglifyjs-webpack-plugin": "^2.1.2",
     "unzip": "^0.1.11",
     "update-notifier": "^2.1.0",
+    "uglifyjs-webpack-plugin": "^2.1.2",
     "url-loader": "^1.1.2",
     "vue": "^2.6.8",
     "vue-loader": "^15.7.0",
@@ -84,12 +84,13 @@
     "webpack-hot-middleware": "^2.24.3",
     "webpack-merge": "^4.2.1",
     "webpack-node-externals": "^1.5.4",
-    "webpackbar": "^3.1.5",
+    "webpackbar": "^2.6.3",
     "yarn-install": "^1.0.0",
     "zls-px2rem-loader": "^1.0.0"
   },
   "deprecated": false,
-  "devDependencies": {},
+  "devDependencies": {
+  },
   "sideEffects": false,
   "engines": {
     "node": ">= 6"

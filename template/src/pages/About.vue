@@ -7,13 +7,16 @@
 
 <script>
   export default {
-    data() {
-      return {}
+    metaInfo: {
+      title: '更多'
     },
-    mounted(){
+    data() {
+      return {};
+    },
+    mounted() {
     },
     computed: {},
     methods: {},
     components: {}
-  }
+  };
 </script>

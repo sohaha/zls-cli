@@ -5,17 +5,21 @@
 </template>
 
 <script>
-  import app from '../components/app.vue'
+  import app from '../components/app.vue';
+
   export default {
-    data() {
-      return {}
+    metaInfo: {
+      title: '首页'
     },
-    mounted(){
+    data() {
+      return {};
+    },
+    mounted() {
     },
     computed: {},
     methods: {},
     components: {
       app
     }
-  }
+  };
 </script>

@@ -1,5 +1,3 @@
-const path = require('path')
-
 module.exports = (options, defaultOpt, require) => {
   return {
     entry: 'src/index.js',
@@ -8,7 +6,6 @@ module.exports = (options, defaultOpt, require) => {
         title: '<%= name %>',
         template: 'template.html'
     },
-    promise: true,
     analyzer: false,
     openBrowser: true,
     <%_ if (electron) { -%>
@@ -19,14 +16,13 @@ module.exports = (options, defaultOpt, require) => {
     },
     <%_ } -%>
     webpack(cfg) {
-        cfg.resolve.modules.push(path.resolve('src'))
         <% if (electron) { %>
         if (!options.dev) {
-            cfg.output.publicPath = './'
+            cfg.output.publicPath = './';
         }
-        cfg.target = 'electron-renderer'
+        cfg.target = 'electron-renderer';
         <% } %>
-        return cfg
+        return cfg;
     }
-  }
-}
+  };
+};

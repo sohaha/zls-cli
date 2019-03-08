@@ -1,1 +1,5 @@
-.idea/
+node_modules
+cache
+cache-loader
+dist
+.idea
