@@ -1,7 +1,7 @@
 {
   "name": "zls-cli",
   "description": "快速上手的webpack构建工具",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "bin": {
     "zls": "bin/zls",
     "zls-cli": "bin/zls",
