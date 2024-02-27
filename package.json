@@ -10,7 +10,7 @@
     "zls-make": "bin/zls-make"
   },
   "bugs": {
-    "url": "https://github.com/sohaha/zls.init/issues"
+    "url": "https://github.com/sohaha/zls-cli/issues"
   },
   "dependencies": {
     "autoprefixer": "^9.4.10",
@@ -99,7 +99,7 @@
     "lib",
     "template"
   ],
-  "homepage": "https://github.com/sohaha/zls.init#readme",
+  "homepage": "https://github.com/sohaha/zls-cli#readme",
   "license": "Apache-2.0",
   "main": "lib/index.js",
   "scripts": {}
